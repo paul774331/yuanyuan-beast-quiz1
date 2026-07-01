@@ -428,11 +428,7 @@ const sessionId = 'S-' + Date.now() + '-' + Math.random().toString(36).slice(2,8
 let answerLog = []; // 每題的完整作答紀錄
 
 function startQuiz(){
-  // 1) 防止重複填寫（同一瀏覽器限填一次）
-  if(localStorage.getItem('beastQuizDone')){
-    document.getElementById('identityErr').textContent = '這個瀏覽器已經測過囉，換個裝置或聯絡媛媛重置 🙏';
-    return;
-  }
+ 
   // 2) 必填姓名/IG驗證
   const nameInput = document.getElementById('userName');
   const name = nameInput.value.trim();
@@ -587,11 +583,12 @@ function submitQuizRecord(beast, pct, total){
   const record = {
 
     // ===== 給 Google Apps Script 使用 =====
+    submittedAt: new Date().toISOString(),
     email: window.userIdentity || "",
     beast: beast.cn,
     score: total,
-    answers: answerLog.map(item => item.selectedOption),
-
+    answers: answerLog.map(item => item.selectedOption)
+};
     // ===== 保留原本資料 =====
     sessionId: sessionId,
     respondentName: window.userIdentity || "",
@@ -603,8 +600,7 @@ function submitQuizRecord(beast, pct, total){
 
 };
 
-  // 標記此瀏覽器已完成填寫，防止重複測驗灌水
-  localStorage.setItem('beastQuizDone', 'true');
+  // 網站不會寫入限制，下次重新整理也能再測一次
 
   // 1) 本機備份（即使後端尚未設定，資料也不會完全遺失）
   try{
