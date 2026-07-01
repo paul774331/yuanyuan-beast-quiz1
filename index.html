@@ -585,15 +585,23 @@ const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzS-SVHMpxQDleSd5F1
 
 function submitQuizRecord(beast, pct, total){
   const record = {
+
+    // ===== 給 Google Apps Script 使用 =====
+    email: window.userIdentity || "",
+    beast: beast.cn,
+    score: total,
+    answers: answerLog.map(item => item.selectedOption),
+
+    // ===== 保留原本資料 =====
     sessionId: sessionId,
-    respondentName: window.userIdentity || '(未填寫)',
+    respondentName: window.userIdentity || "",
     submittedAt: new Date().toISOString(),
     finalBeast: beast.cn,
     finalBeastEN: beast.en,
     scorePercent: pct,
-    scoreTotal: total,
-    answers: answerLog // 每一題的詳細作答內容
-  };
+    scoreTotal: total
+
+};
 
   // 標記此瀏覽器已完成填寫，防止重複測驗灌水
   localStorage.setItem('beastQuizDone', 'true');
